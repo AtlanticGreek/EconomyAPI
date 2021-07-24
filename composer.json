@@ -1,0 +1,11 @@
+{
+  "name": "atlanticgreek/economyapi",
+  "type": "project",
+  "homepage": "https://github.com/AtlanticGreek/EconomyAPI",
+  "license": "GPL-3.0-only",
+  "autoload": {
+    "psr-0": {
+      "onebone\\economyapi\\": "src/"
+    }
+  }
+}
