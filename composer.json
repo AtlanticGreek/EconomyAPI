@@ -3,6 +3,9 @@
   "type": "project",
   "homepage": "https://github.com/AtlanticGreek/EconomyAPI",
   "license": "GPL-3.0-only",
+  "require-dev": {
+    "pocketmine/pocketmine-mp": "^3.0"
+  },
   "autoload": {
     "psr-0": {
       "onebone\\economyapi\\": "src/"
