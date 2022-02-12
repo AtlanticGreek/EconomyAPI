@@ -18,23 +18,41 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace onebone\economyapi\currency;
+namespace onebone\economyapi\internal;
 
-use onebone\economyapi\util\Replacer;
+use onebone\economyapi\provider\RevertAction;
 
-class CurrencyReplacer implements Replacer {
-	public function __construct(
-		private Currency $currency,
-		private float $amount
-	) {
+/**
+ * @internal
+ * Provider that stores what must be undone.
+ *
+ * THIS IS INTERNAL CLASS, AND IS SUBJECT TO CHANGE ANYTIME WITHOUT NOTICE.
+ */
+interface ReversionProvider {
+	/**
+	 * Pending balance that is not reflected to the database. Returns 0
+	 * if none.
+	 *
+	 * @param string $player
+	 * @return float
+	 */
+	public function getPendingBalance(string $player): float;
 
-	}
+	/**
+	 * Returns all pending balances
+	 *
+	 * @return RevertAction[]
+	 */
+	public function getAllPending(): array;
 
-	public function getRawText(): string {
-		return $this->amount;
-	}
+	public function clearPending(): void;
 
-	public function getText(): string {
-		return $this->currency->format($this->amount);
-	}
+	/**
+	 * @param RevertAction[] $actions
+	 */
+	public function addRevertActions(array $actions): void;
+
+	public function save(): void;
+
+	public function close(): void;
 }

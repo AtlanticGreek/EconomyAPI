@@ -18,42 +18,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace onebone\economyapi\currency;
+namespace onebone\economyapi\provider;
 
-use pocketmine\player\Player;
+class RevertAction {
+	public const ADD = 0;
+	public const REDUCE = 1;
 
-class CurrencyDollar implements Currency {
-	public function getName(): string {
-		return 'Dollar';
+	private int $type;
+	private string $player;
+	private float $value;
+
+	public function __construct(int $type, string $player, float $value) {
+		$this->type = $type;
+		$this->player = $player;
+		$this->value = $value;
 	}
 
-	public function isAvailableTo(Player $player): bool {
-		return true;
+	public function getType(): int {
+		return $this->type;
 	}
 
-	public function isExposed(): bool {
-		return true;
+	public function getPlayer(): string {
+		return $this->player;
 	}
 
-	public function getDefaultMoney(): float {
-		return 1000;
-	}
-
-	public function getSymbol(): string {
-		return '$';
-	}
-
-	public function format(float $money): string {
-		$money = floor($money * 100) / 100;
-		return sprintf('$%.2f', $money);
-	}
-
-	public function stringify(float $money): string {
-		$money = floor($money * 100) / 100;
-
-		$digits = floor($money);
-		$decimal = floor(($money - $digits) * 100);
-
-		return $digits . (' dollar' . ($digits > 1 ? 's' : '')) . $decimal . (' cent' . ($decimal > 1 ? 's' : ''));
+	public function getValue(): float {
+		return $this->value;
 	}
 }

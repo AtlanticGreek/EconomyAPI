@@ -20,35 +20,37 @@
 
 namespace onebone\economyapi\provider;
 
+use onebone\economyapi\EconomyAPI;
 use onebone\economyapi\util\Promise;
+use onebone\economyapi\util\TransactionResult;
 
 class DummyProvider implements Provider {
-	public function hasAccount($player): bool {
+	public function hasAccount(Player|string $player): bool {
 		return false;
 	}
 
-	public function createAccount($player, float $defaultMoney = 1000): bool {
+	public function createAccount(Player|string $player, float $defaultMoney = 1000): bool {
 		return false;
 	}
 
-	public function removeAccount($player): bool {
+	public function removeAccount(Player|string $player): bool {
 		return false;
 	}
 
-	public function getMoney($player): bool {
+	public function getMoney(Player|string $player): bool {
 		return false;
 	}
 
-	public function setMoney($player, float $amount): bool {
-		return false;
+	public function setMoney(Player|string $player, float $amount): int {
+		return EconomyAPI::RET_PROVIDER_FAILURE;
 	}
 
-	public function addMoney($player, float $amount): bool {
-		return false;
+	public function addMoney(Player|string $player, float $amount): int {
+		return EconomyAPI::RET_PROVIDER_FAILURE;
 	}
 
-	public function reduceMoney($player, float $amount): bool {
-		return false;
+	public function reduceMoney(Player|string $player, float $amount): int {
+		return EconomyAPI::RET_PROVIDER_FAILURE;
 	}
 
 	public function getAll(): array {
@@ -60,6 +62,10 @@ class DummyProvider implements Provider {
 		$promise->reject(null);
 
 		return $promise;
+	}
+
+	public function executeTransaction(array $actions): TransactionResult {
+		return new TransactionResult(TransactionResult::FAILURE, -9999, []);
 	}
 
 	public function getName(): string {

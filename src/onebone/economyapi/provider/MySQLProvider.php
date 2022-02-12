@@ -24,7 +24,7 @@ use mysqli;
 use onebone\economyapi\EconomyAPI;
 use onebone\economyapi\task\MySQLPingTask;
 use onebone\economyapi\util\Promise;
-use pocketmine\Player;
+use pocketmine\player\Player;
 
 class MySQLProvider implements Provider {
 	/** @var mysqli */
@@ -55,11 +55,11 @@ class MySQLProvider implements Provider {
 	}
 
 	/**
-	 * @param Player|string $player
+	 * @param string|Player $player
 	 * @param float $defaultMoney
 	 * @return bool
 	 */
-	public function createAccount($player, float $defaultMoney = 1000.0): bool {
+	public function createAccount(Player|string $player, float $defaultMoney = 1000.0): bool {
 		if($player instanceof Player) {
 			$player = $player->getName();
 		}
@@ -73,10 +73,10 @@ class MySQLProvider implements Provider {
 	}
 
 	/**
-	 * @param Player|string $player
+	 * @param string|Player $player
 	 * @return bool
 	 */
-	public function hasAccount($player): bool {
+	public function hasAccount(Player|string $player): bool {
 		if($player instanceof Player) {
 			$player = $player->getName();
 		}
@@ -87,10 +87,10 @@ class MySQLProvider implements Provider {
 	}
 
 	/**
-	 * @param Player|string $player
+	 * @param string|Player $player
 	 * @return bool
 	 */
-	public function removeAccount($player): bool {
+	public function removeAccount(Player|string $player): bool {
 		if($player instanceof Player) {
 			$player = $player->getName();
 		}
@@ -101,10 +101,10 @@ class MySQLProvider implements Provider {
 	}
 
 	/**
-	 * @param Player|string $player
+	 * @param string|Player $player
 	 * @return float|bool
 	 */
-	public function getMoney($player) {
+	public function getMoney(Player|string $player) {
 		if($player instanceof Player) {
 			$player = $player->getName();
 		}
@@ -117,11 +117,11 @@ class MySQLProvider implements Provider {
 	}
 
 	/**
-	 * @param Player|string $player
+	 * @param string|Player $player
 	 * @param float $amount
 	 * @return bool
 	 */
-	public function setMoney($player, float $amount): bool {
+	public function setMoney(Player|string $player, float $amount): bool {
 		if($player instanceof Player) {
 			$player = $player->getName();
 		}
@@ -133,11 +133,11 @@ class MySQLProvider implements Provider {
 	}
 
 	/**
-	 * @param Player|string $player
+	 * @param string|Player $player
 	 * @param float $amount
 	 * @return bool
 	 */
-	public function addMoney($player, float $amount): bool {
+	public function addMoney(Player|string $player, float $amount): bool {
 		if($player instanceof Player) {
 			$player = $player->getName();
 		}
@@ -149,11 +149,11 @@ class MySQLProvider implements Provider {
 	}
 
 	/**
-	 * @param Player|string $player
+	 * @param string|Player $player
 	 * @param float $amount
 	 * @return bool
 	 */
-	public function reduceMoney($player, float $amount): bool {
+	public function reduceMoney(Player|string $player, float $amount): bool {
 		if($player instanceof Player) {
 			$player = $player->getName();
 		}
@@ -186,6 +186,11 @@ class MySQLProvider implements Provider {
 		$promise->reject(null);
 
 		return $promise;
+	}
+
+	public function executeTransaction(array $actions): bool {
+		// TODO implement here
+		return false;
 	}
 
 	/**

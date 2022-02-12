@@ -23,6 +23,8 @@ namespace onebone\economyapi\internal;
 use onebone\economyapi\currency\Currency;
 use onebone\economyapi\currency\CurrencyConfig;
 use onebone\economyapi\provider\Provider;
+use onebone\economyapi\task\FlushRevertActionsTask;
+use pocketmine\scheduler\TaskScheduler;
 
 // All class in `internal` namespace must be used only
 // for internal purposes of EconomyAPI, thus it is subject
@@ -30,19 +32,20 @@ use onebone\economyapi\provider\Provider;
 // class anyway.
 /** @internal */
 final class CurrencyHolder {
-	/** @var string */
-	private $id;
-	/** @var Currency */
-	private $currency;
-	/** @var Provider */
-	private $provider;
-	/** @var CurrencyConfig */
-	private $config = null;
+	private BalanceRepository $repository;
+	private ?CurrencyConfig $config = null;
+	private FlushRevertActionsTask $flushTask;
 
-	public function __construct(string $id, Currency $currency, Provider $provider) {
-		$this->id = $id;
-		$this->currency = $currency;
-		$this->provider = $provider;
+	public function __construct(
+		TaskScheduler $scheduler,
+		private string $id,
+		private Currency $currency,
+		Provider $provider
+	) {
+		$this->repository = new BalanceRepository($currency, $provider, new ReversionProviderImpl());
+
+		$this->flushTask = new FlushRevertActionsTask($this->repository);
+		$scheduler->scheduleRepeatingTask($this->flushTask, 20 * 60);
 	}
 
 	public function getId(): string {
@@ -53,8 +56,8 @@ final class CurrencyHolder {
 		return $this->currency;
 	}
 
-	public function getProvider(): Provider {
-		return $this->provider;
+	public function getBalanceRepository(): BalanceRepository {
+		return $this->repository;
 	}
 
 	public function setConfig(CurrencyConfig $config) {
@@ -63,5 +66,15 @@ final class CurrencyHolder {
 
 	public function getConfig(): ?CurrencyConfig {
 		return $this->config;
+	}
+
+	public function save() {
+		$this->repository->save();
+	}
+
+	public function close() {
+		$this->flushTask?->getHandler()?->cancel();
+
+		$this->repository->close();
 	}
 }

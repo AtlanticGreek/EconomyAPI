@@ -18,23 +18,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace onebone\economyapi\currency;
+namespace onebone\economyapi\task;
 
-use onebone\economyapi\util\Replacer;
+use onebone\economyapi\internal\BalanceRepository;
+use pocketmine\scheduler\Task;
 
-class CurrencyReplacer implements Replacer {
-	public function __construct(
-		private Currency $currency,
-		private float $amount
-	) {
+class FlushRevertActionsTask extends Task {
+	private BalanceRepository $repository;
 
+	public function __construct(BalanceRepository $repository) {
+		$this->repository = $repository;
 	}
 
-	public function getRawText(): string {
-		return $this->amount;
-	}
-
-	public function getText(): string {
-		return $this->currency->format($this->amount);
+	public function onRun(): void {
+		$this->repository->tryFlushPending();
 	}
 }
